@@ -360,6 +360,9 @@
     }
     /* Classe applicata via JS quando una sezione è “collassata” */
     .collapsed .items{ display:none; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 95px; /* Spazio di sicurezza per PC e Mobile */ }
+    
   </style>
 </head>
 <body>
@@ -427,14 +430,14 @@
       <!-- =========================================
            1) ANTIPASTI
            ========================================= -->
-      <section class="menu-section" id="antipasti">
+      <section class="menu-section collapsed" id="antipasti">
         <div class="section-header">
           <div>
             <h2>Antipasti</h2>
             <p>Inizia con sapori delicati e ingredienti freschi.</p>
           </div>
           <!-- Pulsante comprimi/espandi -->
-          <button class="collapse-btn" data-target="antipasti">Comprimi</button>
+          <button class="collapse-btn" data-target="antipasti">Espandi</button>
         </div>
         <div class="items">
 
@@ -502,13 +505,13 @@
       <!-- =========================================
            2) PRIMI
            ========================================= -->
-      <section class="menu-section" id="primi">
+      <section class="menu-section collapsed" id="primi">
         <div class="section-header">
           <div>
             <h2>Primi</h2>
             <p>Pasta Fresca: comfort food con tocco Casareccio.</p>
           </div>
-          <button class="collapse-btn" data-target="primi">Comprimi</button>
+          <button class="collapse-btn" data-target="primi">Espandi</button>
         </div>
         <div class="items">
           
@@ -586,13 +589,13 @@
       <!-- =========================================
            3) SECONDI
            ========================================= -->
-      <section class="menu-section" id="secondi">
+      <section class="menu-section collapsed" id="secondi">
         <div class="section-header">
           <div>
             <h2>Secondi</h2>
             <p>Proposte di carne con cotture precise.</p>
           </div>
-          <button class="collapse-btn" data-target="secondi">Comprimi</button>
+          <button class="collapse-btn" data-target="secondi">Espandi</button>
         </div>
         <div class="items">
           
@@ -706,13 +709,13 @@
       <!-- =========================================
            4) CONTORNI
            ========================================= -->
-      <section class="menu-section" id="contorni">
+      <section class="menu-section collapsed" id="contorni">
         <div class="section-header">
           <div>
             <h2>Contorni</h2>
             <p>Perfetti da abbinare: verdure e sfizi.</p>
           </div>
-          <button class="collapse-btn" data-target="contorni">Comprimi</button>
+          <button class="collapse-btn" data-target="contorni">Espandi</button>
         </div>
         <div class="items">
           
@@ -777,13 +780,13 @@
       <!-- =========================================
            5) MENU SPECIALI
            ========================================= -->
-      <section class="menu-section" id="speciali">
+      <section class="menu-section collapsed" id="speciali">
         <div class="section-header">
           <div>
             <h2>Menù Speciali</h2>
             <p>Proposte complete (ideali per pranzo o degustazione).</p>
           </div>
-          <button class="collapse-btn" data-target="speciali">Comprimi</button>
+          <button class="collapse-btn" data-target="speciali">Espandi</button>
         </div>
         <div class="items">
 
@@ -837,13 +840,13 @@
       <!-- =========================================
            6) BIBITE
            ========================================= -->
-      <section class="menu-section" id="bibite">
+      <section class="menu-section collapsed" id="bibite">
         <div class="section-header">
           <div>
             <h2>Bibite</h2>
             <p>Acque, Birre e Vino.</p>
           </div>
-          <button class="collapse-btn" data-target="bibite">Comprimi</button>
+          <button class="collapse-btn" data-target="bibite">Espandi</button>
         </div>
         <div class="items">
           
@@ -956,13 +959,13 @@
  <!-- =========================================
            7) Dolci
            ========================================= -->
-      <section class="menu-section" id="dolci">
+      <section class="menu-section collapsed" id="dolci">
         <div class="section-header">
           <div>
             <h2>Dolci</h2>
             <p>Dolci, Caffè e Amari</p>
           </div>
-          <button class="collapse-btn" data-target="Dolce">Comprimi</button>
+          <button class="collapse-btn" data-target="Dolce">Espandi</button>
         </div>
         <div class="items">
           
