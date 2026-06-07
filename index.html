@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <!-- =========================
+       META / IMPOSTAZIONI BASE
+       ========================= -->
+  <meta charset="UTF-8" />
+  <!-- Viewport per farlo rendere bene su smartphone (fondamentale per QR menu) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Titolo della scheda -->
+  <title>Ristorante | Menù Digitale</title>
+  <!-- =========================
+       STILE (CSS) - COLORI: BEIGE + BLU
+       =========================
+       NOTE:
+       - Tutto è dentro questo file per semplicità.
+       - Puoi spostare il CSS in "style.css" se vuoi (e linkarlo).
+  -->
+  <style>
+    /* =========================
+       VARIABILI COLORI (facili da cambiare)
+       ========================= */
+    :root{
+      /* Beige (sfondo e superfici) */
+      --beige-50:  #fbf7ef;
+      --beige-100: #f5eedf;
+      --beige-200: #eadfc7;
+      /* Blu (accenti eleganti) */
+      --blue-900: #0f2747;  /* blu notte */
+      --blue-700: #1b3f6b;  /* blu medio */
+      --blue-500: #2b5d93;  /* blu accessori */
+      /* Testi */
+      --text-900: #1c1c1c;
+      --text-600: #505050;
+      /* Ombre e bordi */
+      --shadow: 0 10px 25px rgba(15,39,71,0.12);
+      --radius: 18px;
+      --border: 1px solid rgba(15,39,71,0.14);
+    }
+    /* =========================
+       RESET MINIMO + TIPOGRAFIA
+       ========================= */
+    *{ box-sizing: border-box; }
+    html{ scroll-behavior: smooth; } /* Scorrimento fluido sui link */
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text-900);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(43,93,147,0.10), transparent 50%),
+        radial-gradient(1200px 600px at 100% 10%, rgba(15,39,71,0.08), transparent 50%),
+        linear-gradient(180deg, var(--beige-50), var(--beige-100));
+    }
+    /* Contenitore centrale con larghezza massima */
+    .container{
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 18px 0 70px;
+    }
+    /* =========================
+       HEADER (TESTATA)
+       ========================= */
+    header{
+      position: relative;
+      margin-top: 18px;
+      background: linear-gradient(135deg, rgba(15,39,71,0.95), rgba(27,63,107,0.92));
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 26px 22px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    /* Piccolo pattern decorativo */
+    header::before{
+      content:"";
+      position:absolute;
+      inset:-80px -120px auto auto;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(251,247,239,0.22), transparent 60%);
+      transform: rotate(15deg);
+    }
+    .brand{
+      display:flex;
+      align-items:flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      position: relative;
+      z-index: 1;
+    }
+    .brand h1{
+      margin:0;
+      font-size: clamp(1.35rem, 2.8vw, 2.1rem);
+      letter-spacing: 0.3px;
+    }
+    .brand p{
+      margin: 8px 0 0;
+      color: rgba(255,255,255,0.86);
+      line-height: 1.45;
+      max-width: 60ch;
+      font-size: 0.98rem;
+    }
+    /* “Badge” info rapida: orari, WiFi, allergeni */
+    .badges{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .badge{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(251,247,239,0.12);
+      border: 1px solid rgba(251,247,239,0.18);
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.92);
+      white-space: nowrap;
+    }
+    /* =========================
+       NAV (MENU SEZIONI) STICKY
+       ========================= */
+    nav{
+      position: sticky; /* resta “incollato” in alto quando scrolli */
+      top: 12px;
+      z-index: 10;
+      margin-top: 16px;
+      background: rgba(251,247,239,0.82);
+      backdrop-filter: blur(10px);
+      border: var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 18px rgba(15,39,71,0.08);
+    }
+    .nav-inner{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+    }
+    /* Pulsante per aprire/chiudere i link su mobile */
+    .nav-toggle{
+      display:none; /* verrà mostrato solo su schermi piccoli */
+      background: transparent;
+      border: var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      color: var(--blue-900);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    /* Link sezioni */
+    .nav-links{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items:center;
+    }
+    .nav-links a{
+      text-decoration: none;
+      color: var(--blue-900);
+      font-weight: 650;
+      font-size: 0.95rem;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: 120ms ease;
+    }
+    .nav-links a:hover{
+      background: rgba(43,93,147,0.08);
+      border-color: rgba(43,93,147,0.25);
+    }
+    /* Ricerca rapida (filtra i piatti) */
+    .search{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      min-width: 260px;
+    }
+    .search input{
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: var(--border);
+      background: rgba(255,255,255,0.75);
+      outline: none;
+      color: var(--text-900);
+    }
+    .search input:focus{
+      border-color: rgba(43,93,147,0.45);
+      box-shadow: 0 0 0 3px rgba(43,93,147,0.10);
+    }
+    /* =========================
+       SEZIONI MENU
+       ========================= */
+    main{
+      margin-top: 18px;
+      display:grid;
+      gap: 18px;
+    }
+    section.menu-section{
+      background: rgba(255,255,255,0.62);
+      border: var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 22px rgba(15,39,71,0.06);
+      overflow: hidden;
+    }
+    /* Testata sezione (titolo + descrizione) */
+    .section-header{
+      display:flex;
+      align-items:flex-end;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 18px 12px;
+      background: linear-gradient(180deg, rgba(234,223,199,0.75), rgba(251,247,239,0.30));
+      border-bottom: 1px solid rgba(15,39,71,0.10);
+    }
+    .section-header h2{
+      margin:0;
+      color: var(--blue-900);
+      font-size: 1.25rem;
+      letter-spacing: 0.2px;
+    }
+    .section-header p{
+      margin: 6px 0 0;
+      color: var(--text-600);
+      font-size: 0.95rem;
+      max-width: 62ch;
+      line-height: 1.4;
+    }
+    /* Pulsante “comprimi” per sezione */
+    .collapse-btn{
+      flex: 0 0 auto;
+      border: var(--border);
+      background: rgba(255,255,255,0.65);
+      color: var(--blue-900);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 120ms ease;
+    }
+    .collapse-btn:hover{
+      background: rgba(43,93,147,0.08);
+    }
+    /* Lista piatti */
+    .items{
+      padding: 10px 18px 18px;
+      display:grid;
+      gap: 10px;
+    }
+    /* Singolo piatto */
+    .item{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px 14px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      background: rgba(251,247,239,0.6);
+      border: 1px solid rgba(15,39,71,0.10);
+    }
+    .item h3{
+      margin:0;
+      font-size: 1.02rem;
+      color: var(--blue-900);
+    }
+    .item .desc{
+      margin: 6px 0 0;
+      color: var(--text-600);
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+    .price{
+      font-weight: 800;
+      color: var(--blue-700);
+      white-space: nowrap;
+      font-size: 1.02rem;
+      align-self: start;
+    }
+    /* Tag allergeni / note (es: “🌾 glutine”, “🥜 frutta a guscio”) */
+    .tags{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .tag{
+      font-size: 0.82rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(43,93,147,0.10);
+      color: var(--blue-900);
+      border: 1px solid rgba(43,93,147,0.18);
+    }
+    /* =========================
+       FOOTER
+       ========================= */
+    footer{
+      margin-top: 18px;
+      padding: 18px;
+      background: rgba(15,39,71,0.95);
+      color: rgba(255,255,255,0.88);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    footer strong{ color: #fff; }
+    footer a{ color: #fff; }
+    /* =========================
+       BOTTONE "TORNA SU"
+       ========================= */
+    .to-top{
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 50;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 14px;
+      cursor: pointer;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue-900), var(--blue-500));
+      box-shadow: 0 10px 25px rgba(15,39,71,0.25);
+      display:none; /* appare solo dopo un po' di scroll */
+    }
+    /* =========================
+       RESPONSIVE (SMARTPHONE)
+       ========================= */
+    @media (max-width: 820px){
+      .brand{
+        flex-direction: column;
+      }
+      .search{
+        min-width: 0;
+        width: 100%;
+      }
+      .nav-inner{
+        flex-wrap: wrap;
+      }
+      /* Mostra il toggle del menu su mobile */
+      .nav-toggle{ display:block; }
+      /* Nasconde i link finché non apri il menu */
+      .nav-links{
+        width: 100%;
+        display:none;
+        padding: 6px 0 8px;
+      }
+      .nav-links.open{ display:flex; }
+    }
+    /* =========================
+       STAMPA (OPZIONALE)
+       Quando stampi, nasconde nav e bottone.
+       ========================= */
+    @media print{
+      nav, .to-top, .collapse-btn{ display:none !important; }
+      body{ background: #fff; }
+      header, footer, section.menu-section{ box-shadow:none; }
+    }
+    /* Classe applicata via JS quando una sezione è “collassata” */
+    .collapsed .items{ display:none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- =========================
+         HEADER: NOME + INFO
+         ========================= -->
+    <header id="top">
+      <div class="brand">
+        <div>
+          <!-- Nome ristorante: modifica qui -->
+          <h1>Ristorante “Il Ritrovo” (Romeo)</h1>
+          <!-- Sottotitolo / descrizione breve: modifica qui -->
+          <p>
+            Menù del Giorno
+           </p>
+           <p>
+            Ingredienti selezionati, cucina stagionale e proposte speciali.
+          </p>
+          <!-- Badge rapidi: puoi aggiungere/rimuovere blocchi -->
+          <div class="badges">
+            <span class="badge">🕒 12:00–15:00</span>
+            <span class="badge">📍 Gambarie</span>
+            <span class="badge">⚠️ Chiedi info allergeni al personale</span>
+          </div>
+        </div>
+        <!-- Spazio opzionale per un “bollino” o una nota -->
+        <div class="badge" title="Suggerimento">
+          ⭐ Consiglio dello Chef: Menù Speciali
+        </div>
+      </div>
+    </header>
+    <!-- =========================
+         NAV: link rapidi alle sezioni + ricerca
+         ========================= -->
+    <nav aria-label="Navigazione menù">
+      <div class="nav-inner">
+        <!-- Pulsante per aprire/chiudere i link su mobile -->
+        <button class="nav-toggle" id="navToggle" aria-expanded="false">
+          ☰ Sezioni
+        </button>
+        <!-- Link: ogni href deve corrispondere all'id della sezione -->
+        <div class="nav-links" id="navLinks">
+          <a href="#antipasti">Antipasti</a>
+          <a href="#primi">Primi</a>
+          <a href="#secondi">Secondi</a>
+          <a href="#contorni">Contorni</a>
+          <a href="#speciali">Menù Speciali</a>
+          <a href="#bibite">Bibite</a>
+          <a href="#dolci">Dolci</a>
+        </div>
+        <!-- Ricerca: filtra i piatti per nome/descrizione -->
+        <div class="search" title="Cerca un piatto (nome o ingredienti)">
+          <input id="searchInput" type="search" placeholder="Cerca nel menù… (es. crostata, veg)" />
+        </div>
+      </div>
+    </nav>
+    <!-- =========================
+         MAIN: SEZIONI DEL MENU
+         ========================= -->
+    <main>
+      <!-- =========================================
+           1) ANTIPASTI
+           ========================================= -->
+      <section class="menu-section" id="antipasti">
+        <div class="section-header">
+          <div>
+            <h2>Antipasti</h2>
+            <p>Inizia con sapori delicati e ingredienti freschi.</p>
+          </div>
+          <!-- Pulsante comprimi/espandi -->
+          <button class="collapse-btn" data-target="antipasti">Comprimi</button>
+        </div>
+        <div class="items">
+
+                  <article class="item" data-search="Antipasto Casa Capicollo Stuzzicherie">
+            <div>
+              <h3>Antipasto "Il Ritrovo"</h3>
+              <p class="desc">Capicollo Aspromontano con stuzzicherie calde della casa.</p>
+              <div class="tags">
+                <span class="tag">🥩 Carne</span>
+                <span class="tag">🥛 Latticini</span>
+              </div>
+            </div>
+            <div class="price">€ 7,00</div>
+          </article>
+
+          <article class="item" data-search="Antipasto Salumi Pecorino Stuzzicherie">
+            <div>
+              <h3>Antipasto Ricco all'italiana</h3>
+              <p class="desc">Selezione di salumi Aspromontani e Pecorino accompagnati da stuzzicherie calde della casa</p>
+              <div class="tags">
+                <span class="tag">🥩 Carne</span>
+                <span class="tag">🥛 Latticini</span>
+              </div>
+            </div>
+            <div class="price">€ 10,00</div>
+          </article>
+
+<article class="item" data-search="Crocchè Riso Formaggio">
+            <div>
+              <h3>Crocchette di Riso</h3>
+              <p class="desc">Crocchette di riso ripiene con Formaggio.</p>
+              <div class="tags">
+                <span class="tag">🌿 Vegetariano</span>
+                <span class="tag">🥛 Latticini</span>
+              </div>
+            </div>
+            <div class="price">€ 6,50</div>
+          </article>
+
+  <article class="item" data-search="bruschette pomodoro basilico crostini">
+            <div>
+              <h3>Bruschette della Casa</h3>
+              <p class="desc">Pane tostato, pomodorini, basilico, olio EVO.</p>
+              <div class="tags">
+                <span class="tag">🌿 Vegano</span>
+              </div>
+            </div>
+            <div class="price">€ 5,00</div>
+          </article>
+
+
+        </div>
+      </section>
+      <!-- =========================================
+           2) PRIMI
+           ========================================= -->
+      <section class="menu-section" id="primi">
+        <div class="section-header">
+          <div>
+            <h2>Primi</h2>
+            <p>Pasta Fresca: comfort food con tocco Casareccio.</p>
+          </div>
+          <button class="collapse-btn" data-target="primi">Comprimi</button>
+        </div>
+        <div class="items">
+          
+<article class="item" data-search="Pasta maccheroni pomodoro">
+            <div>
+              <h3>Maccheroni al pomodoro</h3>
+              <p class="desc">Pasta fresca, Pomodoro, Basilico.</p>
+              <div class="tags">
+                <span class="tag">🌿 Vegano</span>
+              </div>
+            </div>
+            <div class="price">€ 7,00</div>
+          </article>
+
+          <article class="item" data-search="Pasta maccheroni pomodoro Ragù Vitello">
+            <div>
+              <h3>Maccheroni al Ragù di Vitello</h3>
+              <p class="desc">Pasta fresca, Pomodoro, Carne di Vitello, Basilico.</p>
+              <div class="tags">
+              <span class="tag">🥩 Carne</span>
+              </div>
+            </div>
+            <div class="price">€ 8,00</div>
+          </article>
+
+          <article class="item" data-search="Pasta maccheroni pomodoro Ragù Capra">
+            <div>
+              <h3>Maccheroni al Ragù di Capra</h3>
+              <p class="desc">Pasta fresca, Pomodoro, Carne di Capra, Basilico.</p>
+              <div class="tags">
+               <span class="tag">🥩 Carne</span>
+              </div>
+            </div>
+            <div class="price">€ 8,00</div>
+          </article>
+
+          <article class="item" data-search="Pasta Tagliolini Funghi Porcini">
+            <div>
+              <h3>Tagliolini ai Funghi</h3>
+              <p class="desc">Pasta fresca, Funghi Porcini.</p>
+              <div class="tags">
+                <span class="tag">🌿 Vegano</span>
+              </div>
+            </div>
+            <div class="price">€ 9,00</div>
+          </article>
+
+          <article class="item" data-search="Stroncatura alici mollica aglio">
+            <div>
+              <h3>Stroncatura Calabrese</h3>
+              <p class="desc">Pasta integrale con alici, aglio e mollica di pane tostata in padella </p>
+              <div class="tags">
+                <span class="tag">🐟 Pesce</span>
+             </div>
+            </div>
+            <div class="price">€ 10,00</div>
+          </article>
+
+        <article class="item" data-search="Pasta Tagliolini Funghi Porcini">
+            <div>
+              <h3>Primo speciale del giorno</h3>
+              <p class="desc">Pasta fresca con ingredienti del giorno in base al mercato.</p>
+              <div class="tags">
+                <span class="tag"> ⚠️ Chiedi al personale la proposta di oggi</span>
+                <span class="tag"> ⚠️ Il prezzo potrebbe variare</span>
+              </div>
+            </div>
+            <div class="price">€ 9,00</div>
+          </article>
+
+
+        </div>
+      </section>
+
+      <!-- =========================================
+           3) SECONDI
+           ========================================= -->
+      <section class="menu-section" id="secondi">
+        <div class="section-header">
+          <div>
+            <h2>Secondi</h2>
+            <p>Proposte di carne con cotture precise.</p>
+          </div>
+          <button class="collapse-btn" data-target="secondi">Comprimi</button>
+        </div>
+        <div class="items">
+          
+         <article class="item" data-search="Costolette Agnello Arrosto limone">
+            <div>
+              <h3>Costolette d'Agnello</h3>
+              <p class="desc"> Costolette d' Agnello Arrosto, limone.</p>
+              <div class="tags">
+                <span class="tag">🥩 Carne</span>
+              </div>
+            </div>
+            <div class="price">€ 9,00</div>
+          </article>
+
+          <article class="item" data-search="grigliata carne mista salsiccia agnello costolette pollo maiale limone">
+            <div>
+              <h3>Grigliata di Carne</h3>
+              <p class="desc">Grigliata mista di carne, spezie, limone, olio EVO.</p>
+              <div class="tags">
+                 <span class="tag">🥩 Carne</span>
+              </div>
+            </div>
+            <div class="price">€9,00</div>
+          </article>
+
+ <article class="item" data-search="grigliata carne mista salsiccia agnello costolette pollo maiale limone">
+            <div>
+              <h3>Salsiccia</h3>
+              <p class="desc">Salsiccia Grigliata, limone.</p>
+              <div class="tags">
+                 <span class="tag">🥩 Carne</span>
+              </div>
+            </div>
+            <div class="price">€7,00</div>
+          </article>
+
+
+<article class="item" data-search="scaloppina funghi pollo maiale porcini">
+            <div>
+              <h3>Scaloppina ai Funghi Porcini</h3>
+              <p class="desc">Scaloppina di maiale ai Funghi Porcini.</p>
+              <div class="tags">
+                 <span class="tag">🥩 Carne</span>
+              </div>
+            </div>
+            <div class="price">€9,00</div>
+          </article>
+
+<article class="item" data-search="scaloppina funghi limone pollo maiale porcini">
+            <div>
+              <h3>Scaloppina al Limone</h3>
+              <p class="desc">Scaloppina di maiale al Limone.</p>
+              <div class="tags">
+                 <span class="tag">🥩 Carne</span>
+              </div>
+            </div>
+            <div class="price">€8,00</div>
+          </article>
+
+<article class="item" data-search="secondo scaloppina funghi limone pollo maiale porcini">
+            <div>
+              <h3>Scaloppina all'Arancia</h3>
+              <p class="desc">Scaloppina di maiale all'Arancia, cannella.</p>
+              <div class="tags">
+                 <span class="tag">🥩 Carne</span>
+              </div>
+            </div>
+            <div class="price">€8,00</div>
+          </article>
+
+<article class="item" data-search="secondo bistecca vitello scaloppina funghi limone pollo maiale porcini">
+            <div>
+              <h3>Bistecca di Vitello </h3>
+              <p class="desc">Bistecca di Vitello alla griglia, limone</p>
+              <div class="tags">
+                 <span class="tag">🥩 Carne</span>
+              </div>
+            </div>
+            <div class="price">€8,00</div>
+          </article>
+
+
+          <article class="item" data-search="secondo bambino pollo cotoletta croccante patatine fritte">
+            <div>
+              <h3>Cotoletta di pollo Crocconte</h3>
+              <p class="desc">Pollo, uovo, panatura leggera servita con Patatine fritte.</p>
+              <div class="tags">
+                <span class="tag">🥩 Carne</span>
+                <span class="tag">🥛 Latticini</span>
+              </div>
+            </div>
+            <div class="price">€ 8,50</div>
+          </article>
+
+
+        </div>
+      </section>
+      <!-- =========================================
+           4) CONTORNI
+           ========================================= -->
+      <section class="menu-section" id="contorni">
+        <div class="section-header">
+          <div>
+            <h2>Contorni</h2>
+            <p>Perfetti da abbinare: verdure e sfizi.</p>
+          </div>
+          <button class="collapse-btn" data-target="contorni">Comprimi</button>
+        </div>
+        <div class="items">
+          
+                    <article class="item" data-search="insalata verde">
+            <div>
+              <h3>Insalata Verde</h3>
+              <p class="desc">Insalata verde da condire a scelta.</p>
+              <div class="tags">
+                <span class="tag">🌿 Vegano</span>
+              </div>
+            </div>
+            <div class="price">€ 3,00</div>
+          </article>
+
+          <article class="item" data-search="Patatine Fritte stuzzicherie patate">
+            <div>
+              <h3>Patatine Fritte</h3>
+              <p class="desc">Patatine fritte*, Sale</p>
+              <div class="tags">
+                <span class="tag">🌿 Vegano</span>
+              </div>
+            </div>
+            <div class="price">€ 3,50</div>
+          </article>
+
+          <article class="item" data-search="Patatine Fritte chips stuzzicherie patate aspromontane">
+            <div>
+              <h3>Chips di Patate fritte</h3>
+              <p class="desc">Patate Aspromontane a fette Fritte, condite con Spezie miste e Sale.</p>
+              <div class="tags">
+                <span class="tag">🌿 Vegano</span>
+                <span class="tag">⭐ Consigliato</span>
+              </div>
+            </div>
+            <div class="price">€ 4,00</div>
+          </article>
+
+          <article class="item" data-search="patate aspromontane forno origano stuzzicherie">
+            <div>
+              <h3>Patate al Forno</h3>
+              <p class="desc">Patate Aspromontane cotte al forno croccanti fuori e morbide dentro, condite con Origano, sale e olio d'oliva.</p>
+              <div class="tags">
+                <span class="tag">🌿 Vegano</span>
+              </div>
+            </div>
+            <div class="price">€ 5,00</div>
+          </article>
+
+         <article class="item" data-search="grigliata verdure zucchine melenzane peperoni stuzzicherie">
+            <div>
+              <h3>Grigliata di Verdure </h3>
+              <p class="desc"> Verdure miste grigliate e condite con Origano, Sale e Olio d'oliva.</p>
+              <div class="tags">
+                <span class="tag">🌿 Vegano</span>
+              </div>
+            </div>
+            <div class="price">€ 5,00</div>
+          </article>
+ 
+        </div>
+      </section>
+      <!-- =========================================
+           5) MENU SPECIALI
+           ========================================= -->
+      <section class="menu-section" id="speciali">
+        <div class="section-header">
+          <div>
+            <h2>Menù Speciali</h2>
+            <p>Proposte complete (ideali per pranzo o degustazione).</p>
+          </div>
+          <button class="collapse-btn" data-target="speciali">Comprimi</button>
+        </div>
+        <div class="items">
+
+  <article class="item" data-search="menu giorno antipasto primo">
+            <div>
+              <h3>Menù Speciale del Giorno</h3>
+              <p class="desc">Antipasto della casa + primo del giorno.</p>
+              <div class="tags">
+                <span class="tag">⭐ Consigliato</span>
+                <span class="tag">⚡ Veloce</span>
+              </div>
+            </div>
+            <div class="price">€ 18,00</div>
+          </article>
+
+          <article class="item" data-search="menu bambino antipasto primo patatine cotoletta">
+            <div>
+              <h3>Menù Happy</h3>
+              <p class="desc">Maccheroni al Pomodoro + Cotoletta e Patatine</p>
+              <div class="tags">
+                              <span class="tag">👦🏻 Fino a 12 anni</span>
+              </div>
+            </div>
+            <div class="price">€ 15,00</div>
+          </article>
+
+<article class="item" data-search="menu degustazione Gianna antipasto primo secondo">
+            <div>
+              <h3>Degustazione “Gianna”</h3>
+              <p class="desc">Antipasto "Il Ritrovo" + Maccheroni al Ragù + Scaloppina ai Funghi con patate fritte.</p>
+              <div class="tags">
+                <span class="tag">⭐ Consigliato</span>
+              </div>
+            </div>
+            <div class="price">€ 25,00</div>
+          </article>
+
+<article class="item" data-search="menu degustazione Gianna antipasto primo secondo">
+            <div>
+              <h3>Degustazione “Peppone”</h3>
+              <p class="desc">Antipasto Ricco all'italiana + Bis di pasta Tagliolini ai funghi Porcini e Maccheroni al Ragù  + Grigliata di carne con contorno di patate fritte.</p>
+              <div class="tags">
+                <span class="tag">⭐ Consigliato</span>
+              </div>
+            </div>
+            <div class="price">€30,00</div>
+          </article>
+
+       </div>
+      </section>
+      <!-- =========================================
+           6) BIBITE
+           ========================================= -->
+      <section class="menu-section" id="bibite">
+        <div class="section-header">
+          <div>
+            <h2>Bibite</h2>
+            <p>Acque, Birre e Vino.</p>
+          </div>
+          <button class="collapse-btn" data-target="bibite">Comprimi</button>
+        </div>
+        <div class="items">
+          
+          <article class="item" data-search="bibite acqua minerale naturale frizzante">
+            <div>
+              <h3>Acqua minerale</h3>
+              <p class="desc">Acqua Naturale / Frizzante (1 L)</p>
+              <div class="tags">
+                <span class="tag">🥤</span>
+              </div>
+            </div>
+            <div class="price">€ 2,00</div>
+          </article>
+
+          <article class="item" data-search="bibite coca cola cocacola zero fanta chinotto the aranciata limonata">
+            <div>
+              <h3>Bibite in lattina</h3>
+              <p class="desc">Coca-Cola, Coca-Cola Zero, Fanta, Chinotto, Sprite, The Pesca/Limone</p>
+              <div class="tags">
+                <span class="tag">🧊 Freddo</span>
+              </div>
+            </div>
+            <div class="price">€ 2,00</div>
+          </article>
+
+          <article class="item" data-search="bibite coca cola cocacola zero fanta chinotto the aranciata limonata">
+            <div>
+              <h3>Gassosa </h3>
+              <p class="desc">Caffè, Limone o Super</p>
+              <div class="tags">
+                <span class="tag">🧊 Freddo</span>
+              </div>
+            </div>
+            <div class="price">€ 2,00</div>
+          </article>
+
+   <article class="item" data-search="vino calice bianco rosso">
+            <div>
+              <h3>Vino Locale</h3>
+              <p class="desc">Vino locale Rosso o Bianco</p>
+              <div class="tags">
+                <span class="tag">🍷1/4l €2,00</span>
+                <span class="tag">🍷1/2l € 3,00</span>
+                <span class="tag">🍷1lt € 5,00</span>
+              </div>
+            </div>
+            <div class="price">€ 5,00</div>
+          </article>
+
+<article class="item" data-search="birra tennet's 33cl artigianale bionda ipa">
+            <div>
+              <h3>Birra Artigianale CALA</h3>
+              <p class="desc">Birra Artigianale Bionda da 33cl</p>
+                           </div>
+            <div class="price">€ 6,00</div>
+          </article>
+
+<article class="item" data-search="birra messina cristalli sale peroni 33cl artigianale bionda ipa">
+            <div>
+              <h3>Birra Messina con Cristalli di Sale</h3>
+              <p class="desc">Birra Bionda da 33cl</p>
+                           </div>
+            <div class="price">€ 3,00</div>
+          </article>
+
+<article class="item" data-search="birra peroni nastro azzurro 33cl artigianale bionda ipa">
+            <div>
+              <h3>Birra Nasto Azzurro </h3>
+              <p class="desc">Birra Bionda da 33cl</p>
+                           </div>
+            <div class="price">€2,50</div>
+          </article>
+
+          <article class="item" data-search="birra peroni 33cl artigianale bionda ipa">
+            <div>
+              <h3>Birra Peroni</h3>
+              <p class="desc">Birra Bionda da 33cl</p>
+                           </div>
+            <div class="price">€ 1,50</div>
+          </article>
+
+ <article class="item" data-search="birra dreher 33cl artigianale bionda ipa">
+            <div>
+              <h3>Birra Dreher </h3>
+              <p class="desc">Birra Bionda da 33cl</p>
+                           </div>
+            <div class="price">€ 1,50</div>
+          </article>
+
+<article class="item" data-search="birra tennet's 33cl artigianale bionda ipa">
+            <div>
+              <h3>Birra Tennent's</h3>
+              <p class="desc">Birra Bionda da 33cl</p>
+                           </div>
+            <div class="price">€ 4,00</div>
+          </article>
+
+<article class="item" data-search="birra bjorne 33cl artigianale bionda ipa">
+            <div>
+              <h3>Birra Bjorne</h3>
+              <p class="desc">Birra Rossa da 33cl</p>
+                           </div>
+            <div class="price">€4,00</div>
+          </article>
+
+       
+        </div>
+      </section>
+
+ <!-- =========================================
+           7) Dolci
+           ========================================= -->
+      <section class="menu-section" id="dolci">
+        <div class="section-header">
+          <div>
+            <h2>Dolci</h2>
+            <p>Dolci, Caffè e Amari</p>
+          </div>
+          <button class="collapse-btn" data-target="Dolce">Comprimi</button>
+        </div>
+        <div class="items">
+          
+          <article class="item" data-search="crostata nonna albicocca ciliegia frutti fi bosco nutella dolce">
+            <div>
+              <h3>Crostata della Nonna</h3>
+              <p class="desc">Crostata fatta in casa con: Albicocca, Ciliegia, Frutti di Bosco, Nutella</p>
+              <div class="tags">
+                <span class="tag">🥛 Latticini</span>
+              </div>
+            </div>
+            <div class="price">€ 2,00</div>
+          </article>
+
+ <article class="item" data-search="crostata nonna albicocca ciliegia frutti fi bosco nutella dolce">
+            <div>
+              <h3>Tartufo di Pizzo</h3>
+              <p class="desc">Tartufo gelato</p>
+              <div class="tags">
+                <span class="tag">🥛 Latticini</span>
+              </div>
+            </div>
+            <div class="price">€ 4,00</div>
+          </article>
+
+ <article class="item" data-search="crostata nonna albicocca ciliegia frutti fi bosco nutella dolce">
+            <div>
+              <h3>Caffè</h3>
+              <p class="desc">Caffè Normale, Macchiato</p>
+                          </div>
+            <div class="price">€ 1,20</div>
+          </article>
+
+
+<article class="item" data-search="crostata nonna albicocca ciliegia frutti fi bosco nutella dolce">
+            <div>
+              <h3>Amari e Grappe</h3>
+              <p class="desc">Limoncello, Cordax, Silano, Amaro del capo, Jägermeister, Grappa Classica, Grappa Barricata</p>
+                          </div>
+            <div class="price">€ 3,00</div>
+          </article>
+
+   
+        </div>
+      </section>
+
+
+  <!-- =========================================
+           8) coperto 
+Questa sezione è inserita fuori dalle altre in modo da non permettere di essere nascosta. 
+Valutare se passarla nella parte alta del menù in modo da renderlo ben visibile.
+           ========================================= -->
+
+<article class="item" data-search="coperto">
+            <div>
+              <h3>Coperto</h3>
+              <p class="desc">Nota: Nei Menù Speciali il coperto è già incluso nel prezzo</p>
+            </div>
+            <div class="price">€ 2,00</div>
+          </article>
+
+
+    </main>
+
+    <!-- =========================
+         FOOTER: CONTATTI / NOTE
+         ========================= -->
+    <footer>
+      <p style="margin:0 0 8px;">
+        <strong>Ristorante “Il Ritrovo” (Romeo)</strong> • Tel. <a href="tel:0965 743021">0965 743021</a> • IG.
+        <!-- 
+<a href="mailto:info@tuoristorante.it">info@tuoristorante.it</a>
+      </p>
+-->
+<a href="https://www.instagram.com/ilritrovoromeo" target="_blank">@ilritrovoromeo</a> </p>
+
+
+      <p style="margin:0; color: rgba(255,255,255,0.78); line-height:1.45;">
+        Prezzi e disponibilità possono variare. Per allergeni e intolleranze, chiedere sempre al personale.
+      </p>
+
+      <p style="margin:0; color: rgba(255,255,255,0.78); line-height:1.45;">
+        I prodotti contrassegnati con (*) sono surgelati all'origine.
+      </p>
+
+    </footer>
+  </div>
+  <!-- Bottone “torna su” -->
+  <button class="to-top" id="toTop" aria-label="Torna su">↑</button>
+  <!-- =========================
+       JAVASCRIPT (PICCOLO E UTILE)
+       - Toggle menu su mobile
+       - Ricerca (filtra piatti)
+       - Comprimi/espandi sezioni
+       - Bottone “torna su”
+       ========================= -->
+  <script>
+    /* =========================
+       1) MENU MOBILE (toggle)
+       ========================= */
+    const navToggle = document.getElementById("navToggle");
+    const navLinks  = document.getElementById("navLinks");
+    navToggle.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("open");
+      navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+    /* Chiude automaticamente i link su mobile quando clicchi una sezione */
+    navLinks.querySelectorAll("a").forEach(a => {
+      a.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+        navToggle.setAttribute("aria-expanded", "false");
+      });
+    });
+    /* =========================
+       2) RICERCA: filtra i piatti
+       =========================
+       Funziona su:
+       - data-search del piatto
+       - testo del titolo/descrizione
+    */
+    const searchInput = document.getElementById("searchInput");
+    const items = Array.from(document.querySelectorAll(".item"));
+    searchInput.addEventListener("input", () => {
+      const q = searchInput.value.trim().toLowerCase();
+      items.forEach(item => {
+        const haystack =
+          (item.getAttribute("data-search") || "") + " " +
+          item.innerText.toLowerCase();
+        item.style.display = haystack.includes(q) ? "" : "none";
+      });
+    });
+    /* =========================
+       3) COMPRIMI/ESPANDI SEZIONI
+       ========================= */
+    const collapseButtons = document.querySelectorAll(".collapse-btn");
+    collapseButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        // Trova la sezione “padre” del bottone
+        const section = btn.closest(".menu-section");
+        const collapsed = section.classList.toggle("collapsed");
+        // Cambia etichetta del bottone in base allo stato
+        btn.textContent = collapsed ? "Espandi" : "Comprimi";
+      });
+    });
+    /* =========================
+       4) BOTTONE “TORNA SU”
+       ========================= */
+    const toTop = document.getElementById("toTop");
+    window.addEventListener("scroll", () => {
+      // Mostra il bottone dopo 450px di scroll (puoi cambiare questo valore)
+      toTop.style.display = window.scrollY > 450 ? "block" : "none";
+    });
+    toTop.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+</body>
+</html>
