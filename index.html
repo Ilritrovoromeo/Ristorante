@@ -362,7 +362,7 @@
     .collapsed .items{ display:none; }
 
 html { scroll-behavior: smooth; scroll-padding-top: 95px; /* Spazio di sicurezza per PC e Mobile */ }
-    
+
   </style>
 </head>
 <body>
@@ -1079,6 +1079,7 @@ Valutare se passarla nella parte alta del menù in modo da renderlo ben visibile
         navToggle.setAttribute("aria-expanded", "false");
       });
     });
+
     /* =========================
        2) RICERCA: filtra i piatti
        =========================
@@ -1086,17 +1087,44 @@ Valutare se passarla nella parte alta del menù in modo da renderlo ben visibile
        - data-search del piatto
        - testo del titolo/descrizione
     */
-    const searchInput = document.getElementById("searchInput");
-    const items = Array.from(document.querySelectorAll(".item"));
-    searchInput.addEventListener("input", () => {
-      const q = searchInput.value.trim().toLowerCase();
-      items.forEach(item => {
-        const haystack =
-          (item.getAttribute("data-search") || "") + " " +
-          item.innerText.toLowerCase();
-        item.style.display = haystack.includes(q) ? "" : "none";
+ 
+const searchInput = document.getElementById("searchInput");
+const items = Array.from(document.querySelectorAll(".item"));
+const sections = Array.from(document.querySelectorAll(".menu-section"));
+searchInput.addEventListener("input", () => {
+  const q = searchInput.value.trim().toLowerCase();
+  // 1) Filtra i singoli piatti
+  items.forEach(item => {
+    const haystack =
+      (item.getAttribute("data-search") || "").toLowerCase() + " " +
+      item.innerText.toLowerCase();
+    item.style.display = haystack.includes(q) ? "" : "none";
+  });
+  // 2) Per ogni sezione: se contiene almeno un piatto visibile, la espande
+  sections.forEach(section => {
+    const visibleItems = Array.from(section.querySelectorAll(".item"))
+      .filter(item => item.style.display !== "none");
+    const button = section.querySelector(".collapse-btn");
+    if (q !== "") {
+      if (visibleItems.length > 0) {
+        section.classList.remove("collapsed");
+        if (button) button.textContent = "Comprimi";
+      } else {
+        section.classList.add("collapsed");
+        if (button) button.textContent = "Espandi";
+      }
+    } else {
+      // Se la ricerca è vuota, torna tutto compresso come all'inizio
+      section.classList.add("collapsed");
+      if (button) button.textContent = "Espandi";
+      // Rimostra tutti i piatti
+      Array.from(section.querySelectorAll(".item")).forEach(item => {
+        item.style.display = "";
       });
-    });
+    }
+  });
+});
+
     /* =========================
        3) COMPRIMI/ESPANDI SEZIONI
        ========================= */
